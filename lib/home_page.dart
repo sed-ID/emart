@@ -85,13 +85,15 @@ class _HomePageState extends State<HomePage> {
 
           final data = snapshot.requireData;
 
-          return GridView.count(
-            crossAxisCount: 2,
-            padding: EdgeInsets.all(16),
-            childAspectRatio: 0.75,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            children: List.generate(data.size, (index) {
+          return GridView.builder(
+            padding: const EdgeInsets.all(10),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+            ),
+            itemCount: data.size,
+            itemBuilder: (context, index) {
               final item = data.docs[index];
 
               return InkWell(
@@ -100,37 +102,22 @@ class _HomePageState extends State<HomePage> {
                 },
                 child: Card(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      AspectRatio(
-                        aspectRatio: 1,
+                      Expanded(
                         child: Image.network(
                           item['image'],
                           fit: BoxFit.cover,
                         ),
                       ),
-                      SizedBox(height: 8),
-                      Text(
-                        item['name'],
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        '${item['price']} EGP',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green,
-                        ),
+                      ListTile(
+                        title: Text(item['name']),
+                        subtitle: Text('${item['price']} EGP'),
                       ),
                     ],
                   ),
                 ),
               );
-            }),
+            },
           );
         },
       ),
