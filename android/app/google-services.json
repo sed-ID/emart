@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "681882037922",
+    "project_id": "emart-e418b",
+    "storage_bucket": "emart-e418b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:681882037922:android:f9f58128e8904d395df1fb",
+        "android_client_info": {
+          "package_name": "com.ritu.emart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "681882037922-1545khddqil6u3ntiokqj0v391hc92it.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKe7VEAxGM76mesL9fBivRiyupXY7rGh4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "681882037922-1545khddqil6u3ntiokqj0v391hc92it.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
