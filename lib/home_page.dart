@@ -3,6 +3,8 @@ import 'package:emart/product_details_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'order_history_page.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -57,10 +59,24 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             ListTile(
-              title: Text('Menu Item 2'),
-              onTap: () {
-                // Update the state of the app.
-                // ...
+              title: Text('Order History'),
+              onTap: () async {
+                final ordersSnapshot = await FirebaseFirestore.instance.collection('order_history')
+                    .where('username', isEqualTo: _username)
+                    .orderBy('timestamp', descending: true)
+                    .get();
+                final orders = ordersSnapshot.docs.map((doc) => {
+                  'productName': doc['product_name'],
+                  'address': doc['address'],
+                  'timestamp': doc['timestamp'],
+                }).toList();
+
+                // navigate to the order history screen and pass the orders data
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => OrderHistoryScreen(orders: orders),
+                  ),
+                );
               },
             ),
             ListTile(
@@ -102,7 +118,11 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => ProductDetails(item: item.data()! as Map<String, dynamic>),
+                      builder: (context) => ProductDetails(
+                        item: item.data()! as Map<String, dynamic>,
+                        username: _username,
+                        userEmail: user.email ?? '',
+                      ),
                     ),
                   );
                 },

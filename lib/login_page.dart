@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'admin_login_page.dart';
+import 'admin_page.dart';
 import 'forgot_password_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -23,36 +23,32 @@ class _LoginPageState extends State<LoginPage> {
   //signIn method
   Future<void> signIn() async {
     try {
+      if (_emailController.text.trim() == 'admin@gmail.com' && _passwordController.text.trim() == '19101296') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AdminDashboardPage()),
+        );
+        return;
+      }
+
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        // show a snackbar or dialog saying that the user was not found
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('User not found')),
         );
       } else if (e.code == 'wrong-password') {
-        // show a snackbar or dialog saying that the password is incorrect
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Incorrect password')),
         );
       }
     }
   }
-  void _handleTap() {
-    setState(() {
-      _tapCounter++;
-      if (_tapCounter == 7) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => AdminLoginPage()),
-        );
-        _tapCounter = 0;
-      }
-    });
-  }
+
+
 
   @override
   //dispose controllers for memory management
@@ -225,21 +221,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   // ... your existing code
                 ],
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 8,
-            left: 8,
-            child: GestureDetector(
-              onTap: _handleTap,
-              child: Text(
-                "Nowshin@tm",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                  decoration: TextDecoration.underline,
-                ),
               ),
             ),
           ),
