@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emart/product_details_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -48,9 +49,10 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             ListTile(
-              title: Text('Menu Item 1'),
+              title: Text('Cart'),
               onTap: () {
                 // Update the state of the app.
+
                 // ...
               },
             ),
@@ -98,7 +100,11 @@ class _HomePageState extends State<HomePage> {
 
               return InkWell(
                 onTap: () {
-                  // TODO: Navigate to product details page
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ProductDetails(item: item.data()! as Map<String, dynamic>),
+                    ),
+                  );
                 },
                 child: Card(
                   child: Column(
@@ -111,7 +117,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       ListTile(
                         title: Text(item['name']),
-                        subtitle: Text('${item['price']} EGP'),
+                        subtitle: Text('${item['price']} Tk'),
                       ),
                     ],
                   ),

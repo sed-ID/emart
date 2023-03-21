@@ -1,5 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import 'admin_page.dart';
 
 class AdminLoginPage extends StatefulWidget {
   @override
@@ -7,134 +11,91 @@ class AdminLoginPage extends StatefulWidget {
 }
 
 class _AdminLoginPageState extends State<AdminLoginPage> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
-  bool _isLoading = false;
-  int _tapCounter = 0;
-
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _login() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-
-    final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
-
-    if (email.isEmpty || password.isEmpty) {
-      setState(() {
-        _isLoading = false;
-      });
-
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text('Please enter email and password'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-      return;
-    }
-
-    try {
-      final adminSnapshot =
-      await FirebaseFirestore.instance.collection('admins').doc(email).get();
-
-      if (!adminSnapshot.exists || adminSnapshot.data()!['password'] != password) {
-        setState(() {
-          _isLoading = false;
-        });
-
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Error'),
-            content: Text('Invalid email or password'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
-        return;
-      }
-
-      Navigator.pushReplacementNamed(context, '/admin');
-    } catch (error) {
-      setState(() {
-        _isLoading = false;
-      });
-
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text('An error occurred. Please try again later.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-      return;
-    }
-  }
-
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Admin Login'),
+        title: Text("Admin Login"),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16),
-        child: _isLoading
-            ? Center(child: CircularProgressIndicator())
-            : Column(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             TextField(
-              controller: _emailController,
+              controller: emailController,
               decoration: InputDecoration(
-                labelText: 'Email',
+                labelText: "Email",
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(
+              height: 16.0,
+            ),
             TextField(
-              controller: _passwordController,
-              obscureText: true,
+              controller: passwordController,
               decoration: InputDecoration(
-                labelText: 'Password',
+                labelText: "Password",
               ),
+              obscureText: true,
             ),
-            SizedBox(height: 32),
+            SizedBox(
+              height: 16.0,
+            ),
             ElevatedButton(
-              onPressed: _login,
-              child: Text('Log In'),
+              onPressed: () {
+                _signIn();
+              },
+              child: Text("Login"),
             ),
           ],
         ),
       ),
     );
   }
+
+  void _signIn() async {
+    try {
+      // Sign in user with email and password
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      // Check if user is an admin
+      QuerySnapshot adminSnapshot = await _firestore.collection("admins")
+          .where("email", isEqualTo: emailController.text)
+          .where("password", isEqualTo: passwordController.text)
+          .get();
+
+      if (adminSnapshot.size > 0) {
+        // User is an admin, navigate to admin dashboard
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AdminDashboardPage()),
+        );
+      } else {
+        // User is not an admin, show error message
+        Fluttertoast.showToast(msg: "You are not an admin!");
+      }
+    } on FirebaseAuthException catch (e) {
+      // Handle Firebase auth exceptions
+      if (e.code == 'user-not-found') {
+        Fluttertoast.showToast(msg: "User not found");
+      } else if (e.code == 'wrong-password') {
+        Fluttertoast.showToast(msg: "Wrong password");
+      }
+    } catch (e) {
+      // Handle other exceptions
+      print('Error: $e');
+    }
+  }
+
+
 }

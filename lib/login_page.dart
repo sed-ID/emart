@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   //login title
                   Text(
-                    "GRE Bangla",
+                    "E-Mart",
                     style: GoogleFonts.bebasNeue(
                       fontSize: 50,
                     ),
@@ -84,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
                     height: 10,
                   ),
                   Text(
-                    "All your English needs are fullfilled here.",
+                    "Welcome To e-mart.",
                     style: GoogleFonts.alata(
                       fontSize: 18,
                     ),
