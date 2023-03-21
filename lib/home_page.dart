@@ -72,10 +72,9 @@ class _HomePageState extends State<HomePage> {
                 }).toList();
 
                 // navigate to the order history screen and pass the orders data
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => OrderHistoryScreen(orders: orders),
-                  ),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => OrderHistoryPage()),
                 );
               },
             ),
