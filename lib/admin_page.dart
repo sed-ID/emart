@@ -1,7 +1,9 @@
+import 'package:emart/users_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'add_item_page.dart';
+import 'delivery_list.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   @override
@@ -28,12 +30,21 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               title: Text('Orders'),
               onTap: () {
                 // Navigate to orders page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => OrdersPage()),
+                );
+
               },
             ),
             ListTile(
               title: Text('Users'),
               onTap: () {
                 // Navigate to users page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UsersList()),
+                );
               },
             ),
           ],
